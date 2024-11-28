@@ -26,6 +26,7 @@ describe("Volunteer Hours Tracker", () => {
         charityNameInput = dom.window.document.getElementById("charity-name");
         hoursVolunteeredInput = dom.window.document.getElementById("hours-volunteered");
         dateInput = dom.window.document.getElementById("date");
+        
         ratingInput = dom.window.document.getElementById("rating");
         submitButton = dom.window.document.querySelector("button[type='submit']");
 
