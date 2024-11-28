@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donation Tracker</title>
+    <link rel="stylesheet" href="donation-tracker.css">
+</head>
+<body>
+    <!-- Header Section -->
+    <header>
+        <h1>Donation Tracker</h1>
+        <nav>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Donate</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main Content Area -->
+    <main>
+        <section id="donation-form">
+            <h2>Make a Donation</h2>
+            <form id="donation-form">
+                <label for="charity">Charity Name:</label>
+                <input type="text" id="charity" name="charity" required>
+
+                <label for="amount">Donation Amount:</label>
+                <input type="number" id="amount" name="amount" required>
+
+                <label for="date">Date of Donation:</label>
+                <input type="date" id="date" name="date" required>
+
+                <label for="message">Donor Message:</label>
+                <textarea id="message" name="message"></textarea>
+
+                <button type="submit">Submit Donation</button>
+            </form>
+        </section>
+    </main>
+
+    <!-- Footer Section -->
+    <footer>
+        <p>&copy; 2024 Community Support. All rights reserved.</p>
+    </footer>
+
+    <script src="donation-tracker.js"></script>
+</body>
+</html>
