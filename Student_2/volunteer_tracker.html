@@ -1,0 +1,55 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Volunteer Hours Tracker</title>
+    <link rel="stylesheet" href="volunteer_tracker.css">
+</head>
+<body>
+    
+    
+    <header>
+        Volunteer Hours Tracker
+    </header>
+
+    <nav>
+        <a href="#">Home</a>
+        <a href="#">About</a>
+        <a href="#">Contact</a>
+    </nav>
+
+    <div class="form-container">
+        <h2>Log Your Volunteer Hours</h2>
+        <form id="volunteer-form">
+            <label for="charity-name">Charity Name:</label>
+            <input type="text" id="charity-name" required>
+
+            <label for="hours-volunteered">Hours Volunteered:</label>
+            <input type="number" id="hours-volunteered" min="0" required>
+
+            <label for="volunteer-date">Date:</label>
+            <input type="date" id="volunteer-date" required>
+
+            <label for="experience-rating">Volunteer Experience Rating:</label>
+            <select id="experience-rating" required>
+                <option value="">Select Rating</option>
+                <option value="1">1 Star</option>
+                <option value="2">2 Stars</option>
+                <option value="3">3 Stars</option>
+                <option value="4">4 Stars</option>
+                <option value="5">5 Stars</option>
+            </select>
+
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+
+    <footer>
+        &copy; 2024 Volunteer Tracker | All content protected
+    </footer>
+
+    <script src="volunteer_tracker.js"></script>
+</body>
+</html>
