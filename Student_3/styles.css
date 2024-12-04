@@ -58,6 +58,56 @@ form button:hover {
     background-color: #45a049;
 }
 
+h2 {
+    color:#333;
+    margin-top: 30px;
+}
+
+#signup-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+#signup-table th, #signup-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+#signup-table th {
+    background-color: #f2f2f2;
+}
+
+/* Style for delete buttons in the table */
+button.delete-btn {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+button.delete-btn:hover {
+    background-color: #d32f2f;
+}
+
+/* Style for the upcoming events section */
+#role-breakdown {
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#role-breakdown div {
+    margin-bottom: 10px;
+}
+
 .donation-table {
     margin: 20px;
 }
