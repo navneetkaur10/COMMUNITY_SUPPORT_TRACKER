@@ -1,35 +1,31 @@
-document.getElementById('donation-form').addEventListener('submit', function(event) {
-    event.preventDefault();
-
+document.getElementById('donationForm').addEventListener('submit', function (event) {
+    event.preventDefault(); // Prevent form submission
+    
     // Collect form data
-    let charityName = document.getElementById('charity-name').value;
-    let donationAmount = parseFloat(document.getElementById('donation-amount').value);
-    let donationDate = document.getElementById('donation-date').value;
-    let donorComment = document.getElementById('donor-comment').value;
-
-    // Input validation
-    if (!charityName || !donationDate || isNaN(donationAmount) || donationAmount <= 0) {
-        alert("Please fill out all required fields correctly. Ensure that the donation amount is a valid number greater than 0.");
+    const charity = document.getElementById('charity').value;
+    const amount = parseFloat(document.getElementById('amount').value);
+    const date = document.getElementById('date').value;
+    const message = document.getElementById('message').value;
+    
+    // Validation
+    if (!charity || !amount || !date) {
+        alert("Please fill in all required fields.");
         return;
     }
 
-    // Create temporary data object to store the form data
+    if (isNaN(amount) || amount <= 0) {
+        alert("Please enter a valid donation amount.");
+        return;
+    }
+
+    // Temporary data object to store donation info
     const donationData = {
-        charityName: charityName,
-        donationAmount: donationAmount,
-        donationDate: donationDate,
-        donorComment: donorComment
+        charity: charity,
+        amount: amount,
+        date: date,
+        message: message
     };
 
-    // Log the donation data (for now, we just log it to the console)
-    console.log(donationData);
-
-    // Attach the data to the window object for testing purposes
-    window.donationData = donationData;
-
-    // Clear the form after submission
-    document.getElementById('donation-form').reset();
-
-    // Display success alert
-    alert("Donation successfully submitted!");
+    console.log("Donation Data:", donationData); // For testing purposes, can remove in production
+    alert("Donation submitted successfully!");
 });

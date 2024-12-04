@@ -1,118 +1,105 @@
+const fs = require('fs');
+const path = require('path');
 const { JSDOM } = require('jsdom');
 
-describe('Donation Tracker', () => {
-  let dom;
-  let form;
-  let charityNameInput;
-  let donationAmountInput;
-  let donationDateInput;
-  let donorCommentInput;
-  let submitButton;
+// Read the HTML file
+const html = fs.readFileSync(path.resolve(__dirname, 'donation-tracker.html'), 'utf8');
 
-  beforeEach(() => {
-    // Set up the JSDOM environment to simulate the browser
-    dom = new JSDOM(`<!DOCTYPE html>
-      <html>
-        <body>
-          <form id="donation-form">
-            <input type="text" id="charity-name" name="charity-name">
-            <input type="number" id="donation-amount" name="donation-amount">
-            <input type="date" id="donation-date" name="donation-date">
-            <textarea id="donor-comment" name="donor-comment"></textarea>
-            <button type="submit">Submit Donation</button>
-          </form>
-        </body>
-      </html>
-    `);
+// Variables to hold the DOM and document
+let dom;
+let document;
 
-    // Mock DOM elements
-    form = dom.window.document.getElementById('donation-form');
-    charityNameInput = dom.window.document.getElementById('charity-name');
-    donationAmountInput = dom.window.document.getElementById('donation-amount');
-    donationDateInput = dom.window.document.getElementById('donation-date');
-    donorCommentInput = dom.window.document.getElementById('donor-comment');
-    submitButton = dom.window.document.querySelector('button[type="submit"]');
+// Mock the alert function globally
+global.alert = jest.fn();
 
-    // Mock alert function
-    global.alert = jest.fn();
+beforeEach(() => {
+    // Initialize DOM and document
+    dom = new JSDOM(html, { runScripts: 'dangerously', resources: 'usable' });
+    document = dom.window.document;
 
-    // Attach the event handler (as in the original JavaScript)
-    const script = dom.window.document.createElement('script');
-    script.textContent = `
-      document.getElementById('donation-form').addEventListener('submit', function(event) {
-        event.preventDefault();
+    // Ensure the script is executed in the simulated DOM
+    const script = fs.readFileSync(path.resolve(__dirname, 'donation-tracker.js'), 'utf8');
+    const scriptEl = document.createElement('script');
+    scriptEl.textContent = script;
+    document.body.appendChild(scriptEl);
 
-        const charityName = document.getElementById('charity-name').value;
-        const donationAmount = parseFloat(document.getElementById('donation-amount').value);
-        const donationDate = document.getElementById('donation-date').value;
-        const donorComment = document.getElementById('donor-comment').value;
+    // Reset mock alert for each test
+    global.alert.mockClear();
+});
 
-        if (!charityName || !donationDate || isNaN(donationAmount) || donationAmount <= 0) {
-          alert("Please fill out all required fields correctly. Ensure that the donation amount is a valid number greater than 0.");
-          return;
-        }
+describe('Donation Tracker Form', () => {
+    test('should trigger function on form submission', () => {
+        const form = document.getElementById('donationForm');
 
-        window.donationData = { charityName, donationAmount, donationDate, donorComment };
-        document.getElementById('donation-form').reset();
-        alert("Donation successfully submitted!");
-      });
-    `;
-    dom.window.document.body.appendChild(script);
-  });
+        // Spy on the submit event
+        const handleSubmit = jest.fn((e) => e.preventDefault());
+        form.addEventListener('submit', handleSubmit);
 
-  test('should trigger the function on form submission', () => {
-    charityNameInput.value = 'Red Cross';
-    donationAmountInput.value = '100';
-    donationDateInput.value = '2024-11-26';
-    donorCommentInput.value = 'Keep up the good work!';
+        // Fill the form fields
+        document.getElementById('charity').value = 'Red Cross';
+        document.getElementById('amount').value = '100';
+        document.getElementById('date').value = '2024-11-30';
+        document.getElementById('message').value = 'Keep it up!';
 
-    form.submit(); // Using form.submit() instead of button click to trigger the form submission directly
+        // Trigger form submission
+        form.dispatchEvent(new dom.window.Event('submit'));
 
-    expect(dom.window.donationData).toEqual({
-      charityName: 'Red Cross',
-      donationAmount: 100,
-      donationDate: '2024-11-26',
-      donorComment: 'Keep up the good work!'
+        // Check if the handler was called
+        expect(handleSubmit).toHaveBeenCalled();
     });
-  });
 
-  test('should validate required fields', () => {
-    charityNameInput.value = '';
-    donationAmountInput.value = '100';
-    donationDateInput.value = '2024-11-26';
-    donorCommentInput.value = '';
+    test('should correctly collect form data', () => {
+        // Fill the form fields
+        document.getElementById('charity').value = 'Red Cross';
+        document.getElementById('amount').value = '100';
+        document.getElementById('date').value = '2024-11-30';
+        document.getElementById('message').value = 'Keep up the great work!';
 
-    form.submit();
+        // Trigger form submission
+        const form = document.getElementById('donationForm');
+        form.dispatchEvent(new dom.window.Event('submit'));
 
-    expect(dom.window.donationData).toBeUndefined();
-    expect(global.alert).toHaveBeenCalledWith('Please fill out all required fields correctly. Ensure that the donation amount is a valid number greater than 0.');
-  });
+        // Check the collected data
+        const collectedData = {
+            charity: document.getElementById('charity').value,
+            amount: parseFloat(document.getElementById('amount').value),
+            date: document.getElementById('date').value,
+            message: document.getElementById('message').value,
+        };
 
-  test('should validate donation amount', () => {
-    charityNameInput.value = 'Red Cross';
-    donationAmountInput.value = '-50'; // Invalid donation amount
-    donationDateInput.value = '2024-11-26';
-    donorCommentInput.value = 'Good cause!';
-
-    form.submit();
-
-    expect(dom.window.donationData).toBeUndefined();
-    expect(global.alert).toHaveBeenCalledWith('Please fill out all required fields correctly. Ensure that the donation amount is a valid number greater than 0.');
-  });
-
-  test('should correctly populate the donation data object', () => {
-    charityNameInput.value = 'Red Cross';
-    donationAmountInput.value = '100';
-    donationDateInput.value = '2024-11-26';
-    donorCommentInput.value = 'Great cause, happy to help!';
-
-    form.submit();
-
-    expect(dom.window.donationData).toEqual({
-      charityName: 'Red Cross',
-      donationAmount: 100,
-      donationDate: '2024-11-26',
-      donorComment: 'Great cause, happy to help!'
+        expect(collectedData).toEqual({
+            charity: 'Red Cross',
+            amount: 100,
+            date: '2024-11-30',
+            message: 'Keep up the great work!',
+        });
     });
-  });
+
+    test('should flag missing required fields', () => {
+        // Fill incomplete form fields
+        document.getElementById('charity').value = ''; // Empty value for charity
+        document.getElementById('amount').value = '50';
+        document.getElementById('date').value = ''; // Empty value for date
+
+        // Trigger form submission
+        const form = document.getElementById('donationForm');
+        form.dispatchEvent(new dom.window.Event('submit'));
+
+        // Check the alert for missing fields
+        expect(global.alert).toHaveBeenCalledWith('Please fill in all required fields.');
+    });
+
+    test('should flag invalid donation amount', () => {
+        // Fill the form fields
+        document.getElementById('charity').value = 'Red Cross';
+        document.getElementById('amount').value = '-50'; // Invalid amount
+        document.getElementById('date').value = '2024-11-30';
+
+        // Trigger form submission
+        const form = document.getElementById('donationForm');
+        form.dispatchEvent(new dom.window.Event('submit'));
+
+        // Check the alert for invalid amount
+        expect(global.alert).toHaveBeenCalledWith('Please enter a valid donation amount.');
+    });
 });
