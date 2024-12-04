@@ -1,33 +1,80 @@
-document.getElementById('volunteer-form').addEventListener('submit', function(event) {
-    event.preventDefault();
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('volunteer-form');
+    const charityNameInput = document.getElementById('charity-name');
+    const hoursVolunteeredInput = document.getElementById('hours-volunteered');
+    const volunteerDateInput = document.getElementById('volunteer-date');
+    const experienceRatingInput = document.getElementById('experience-rating');
+    const logTableBody = document.querySelector('#log-table tbody');
+    const totalHoursValue = document.getElementById('total-hours-value');
 
-    // // Gathering the form data.
-    let charityName = document.getElementById('charity-name').value;
-    let hoursVolunteered = parseFloat(document.getElementById('hours-volunteered').value);
-    let volunteerDate = document.getElementById('volunteer-date').value;
-    let experienceRating = parseInt(document.getElementById('experience-rating').value);
+    // Get saved volunteer logs from localStorage
+    let volunteerLogs = JSON.parse(localStorage.getItem('volunteerLogs')) || [];
+    renderLogs();  
 
-    //  Verify the input for accuracy
-    if (!charityName || !volunteerDate || isNaN(hoursVolunteered) || isNaN(experienceRating) || experienceRating < 1 || experienceRating > 5) {
-        alert("Please fill out all fields correctly. Ensure that hours volunteered is a valid number, and experience rating is between 1-5.");
-        return;
+    // Take action when the form is submitted
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        // Gather form data
+        const charityName = charityNameInput.value;
+        const hoursVolunteered = parseFloat(hoursVolunteeredInput.value);
+        const volunteerDate = volunteerDateInput.value;
+        const experienceRating = parseInt(experienceRatingInput.value);
+
+        // Validate form data
+        if (!charityName || !volunteerDate || isNaN(hoursVolunteered) || isNaN(experienceRating) || experienceRating < 1 || experienceRating > 5) {
+            alert("Please fill out all fields correctly.");
+            return;
+        }
+
+        // Create the volunteer data object
+        const volunteerData = { charityName, hoursVolunteered, volunteerDate, experienceRating };
+        volunteerLogs.push(volunteerData);
+
+        // Store data in localStorage
+        localStorage.setItem('volunteerLogs', JSON.stringify(volunteerLogs));
+
+        // Reset form and re-render table
+        form.reset();
+        renderLogs();
+    });
+
+    // Function to render logs in the table
+    function renderLogs() {
+        logTableBody.innerHTML = '';  
+        let totalHours = 0;
+
+        volunteerLogs.forEach((log, index) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${log.charityName}</td>
+                <td>${log.hoursVolunteered}</td>
+                <td>${log.volunteerDate}</td>
+                <td>${log.experienceRating} Stars</td>
+                <td><button class="delete-btn" data-index="${index}">Delete</button></td>
+            `;
+            logTableBody.appendChild(row);
+            totalHours += log.hoursVolunteered;
+        });
+
+        // Refresh the total hours
+        totalHoursValue.textContent = totalHours;
+
+        // Attach click events to delete buttons
+
+        const deleteButtons = document.querySelectorAll('.delete-btn');
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const index = button.getAttribute('data-index');
+                deleteLog(index);
+            });
+        });
     }
 
-    // Temporary object to hold the form data.
-    const volunteerData = {
-        charityName: charityName,
-        hoursVolunteered: hoursVolunteered,
-        volunteerDate: volunteerDate,
-        experienceRating: experienceRating
-    };
-
-    // Output the data to the console (this can later be sent to a server).
-    console.log(volunteerData);
-
-    // Put the data on the window object so it can be accessed during testing.
-    window.volunteerData = volunteerData;  
-
-    // Reset the form after it is submitted.
-    document.getElementById('volunteer-form').reset();
-    alert("Volunteer hours successfully submitted!");
+    // Function to delete a log from localStorage and re-render
+    function deleteLog(index) {
+        volunteerLogs.splice(index, 1);  // Remove the log
+        localStorage.setItem('volunteerLogs', JSON.stringify(volunteerLogs));  
+        renderLogs();  
+    }
 });
