@@ -4,7 +4,7 @@ describe('Event Signup Form', () => {
     let form, eventName, representativeName, representativeEmail, role, formData, dom;
 
     beforeEach(() => {
-        // Simulate a browser environment using JSDOM
+        // a browser environment using JSDOM
         dom = new JSDOM(`
             <form id="event-signup-form">
                 <input type="text" id="event-name" name="event-name" required>

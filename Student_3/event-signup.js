@@ -9,7 +9,7 @@ document.getElementById('event-signup-form').addEventListener('submit', function
     const representativeEmail = document.getElementById('representative-email').value;
     const role = document.getElementById('role').value;
 
-    // Create a temporary object to store the form data
+    // temporary object to store the form data
     const formData = {
         eventName,
         representativeName,
