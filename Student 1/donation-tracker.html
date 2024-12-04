@@ -23,21 +23,45 @@
     <main>
         <section id="donation-form">
             <h2>Make a Donation</h2>
-            <form id="donationForm">
+            <form id="donationForm" aria-labelledby="donation-form">
                 <label for="charity">Charity Name:</label>
-                <input type="text" id="charity" name="charity" required>
+                <input type="text" id="charity" name="charity" required aria-label="Charity name">
 
                 <label for="amount">Donation Amount:</label>
-                <input type="number" id="amount" name="amount" required>
+                <input type="number" id="amount" name="amount" required min="0" step="0.01" aria-label="Donation amount" placeholder="Enter amount">
 
                 <label for="date">Date of Donation:</label>
-                <input type="date" id="date" name="date" required>
+                <input type="date" id="date" name="date" required aria-label="Donation date">
 
                 <label for="message">Donor Message:</label>
-                <textarea id="message" name="message"></textarea>
+                <textarea id="message" name="message" aria-label="Donor message" placeholder="Add a message (optional)"></textarea>
 
                 <button type="submit">Submit Donation</button>
             </form>
+        </section>
+
+        <!-- Donations Table Section -->
+        <section id="donations-table">
+            <h2>Existing Donations</h2>
+            <table id="donationTable">
+                <thead>
+                    <tr>
+                        <th>Charity Name</th>
+                        <th>Donation Amount</th>
+                        <th>Date</th>
+                        <th>Message</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="donationTableBody">
+                    <!-- Dynamic rows will be populated here -->
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Donation Summary Section -->
+        <section id="donation-summary">
+            <h3>Total Donations: $<span id="totalAmount">0.00</span></h3>
         </section>
     </main>
 
