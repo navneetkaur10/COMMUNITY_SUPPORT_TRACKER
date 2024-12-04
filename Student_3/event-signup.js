@@ -29,11 +29,66 @@ document.getElementById('event-signup-form').addEventListener('submit', function
     if (!emailPattern.test(representativeEmail)) {
         // Alert the user if the email format is invalid
         alert("Please enter a valid email address.");
-        return; // Stop the function if email format is invalid
+        return; 
     }
 
     // If all validations pass, log the form data to the console (for now)
-    console.log('Form Data:', formData);
+    const signups = JSON.parse(localStorage.getItem('signups')) || [];
+    signups.push(formData);
+    localStorage.setItem('signups', JSON.stringify(signups));
 
-    // Additional actions can be taken here, such as submitting the data to a server
+    // Reload the table to display the new signup
+    loadSignups();
 });
+
+// Function to load signups from localStorage and display them in the table
+function loadSignups() {
+    // Get the signups from localStorage or an empty array if nothing is saved
+    const signups = JSON.parse(localStorage.getItem('signups')) || [];
+
+    // Select the table body where the signups will be displayed
+    const tableBody = document.querySelector('#signup-table tbody');
+
+    // Clear any previous table rows
+    tableBody.innerHTML = '';
+
+    // Loop through each signup and create a table row for it
+    signups.forEach((signup, index) => {
+        // Create a new row
+        const row = document.createElement('tr');
+
+        // Add the signup data to the row
+        row.innerHTML = `
+            <td>${signup.eventName}</td>
+            <td>${signup.repName}</td>
+            <td>${signup.repEmail}</td>
+            <td>${signup.role}</td>
+            <td><button class="delete-btn" data-index="${index}">Delete</button></td>
+        `;
+
+        // Add the row to the table body
+        tableBody.appendChild(row);
+    });
+}
+
+// Handle the deletion of a signup
+document.querySelector('#signup-table').addEventListener('click', function (e) {
+    if (e.target && e.target.classList.contains('delete-btn')) {
+        const index = e.target.getAttribute('data-index');
+        deleteSignup(index);
+    }
+});
+
+function deleteSignup(index) {
+    // Get signups from localStorage
+    const signups = JSON.parse(localStorage.getItem('signups')) || [];
+    
+    // Remove the signup at the specified index
+    signups.splice(index, 1);
+    
+    // Save the updated signups back to localStorage
+    localStorage.setItem('signups', JSON.stringify(signups));
+    
+    // Reload the table
+    loadSignups();
+}
